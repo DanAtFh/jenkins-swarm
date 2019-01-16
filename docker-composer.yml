@@ -4,23 +4,24 @@ networks:
   jenkins_swarm:
 
 volumes:
-    jenkins_data: {}
+    jenkins-docker:
+      driver: nimble
+      driver_opts:
+        sizeInGiB: 10
 
 services:
   jenkins:
-    image: csanchez/jenkins-swarm
+    image: jenkins/jenkins:lts
     ports:
       - 8080:8080
     restart: always
     networks:
       - jenkins_swarm
     volumes:
-      - jenkins_data:/var/jenkins_home
-    environment:
-      - "constraint:NODE==fh-gsc-swarm1"
+      - jenkins-docker:/var/jenkins_home
 
   worker:
-    image: csanchez/jenkins-swarm-slave
+    image: ffth/jenkins-swarm-slave:1.0
     command: -username jenkins -password jenkins -executors 1
     networks:
       - jenkins_swarm
